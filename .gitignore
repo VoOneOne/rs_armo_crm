@@ -1,0 +1,4 @@
+vendor
+.idea
+nginx/*.log
+composer.phar
