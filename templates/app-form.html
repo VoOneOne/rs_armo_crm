@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма на Vue.js</title>
+    <!-- Включаем Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+</head>
+<body>
+<div id="app">
+    <h1>Форма на Vue.js</h1>
+    <form @submit.prevent="submitForm">
+        <div>
+            <label for="name">Имя:</label>
+            <input type="text" id="name" v-model="formData.name" required>
+        </div>
+        <div>
+            <label for="phone">Телефон:</label>
+            <input type="text" id="phone" v-model="formData.phone" required>
+        </div>
+        <div>
+            <label for="email">Почта:</label>
+            <input type="email" id="email" v-model="formData.email" required>
+        </div>
+        <div>
+            <label for="price">Цена:</label>
+            <input type="number" id="price" v-model="formData.price" required>
+        </div>
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+
+<!-- Модальное окно для уведомлений -->
+<div id="modal" v-if="showModal">
+    <div>
+        <h2>Ошибка</h2>
+        <p>{{ errorMessage }}</p>
+        <button @click="closeModal">Закрыть</button>
+    </div>
+</div>
+
+<script>
+    const devApiUrl = 'http://localhost:8081/v1';
+    const prodApiUrl = 'https://propblob.ru//v1';
+    new Vue({
+        el: '#app',
+        data: {
+            formData: {
+                name: '',
+                phone: '',
+                email: '',
+                price: ''
+            },
+            showModal: false,
+            errorMessage: ''
+        },
+        methods: {
+            submitForm() {
+                // Валидация данных
+                if (!this.validateFormData()) {
+                    return;
+                }
+
+                // Отправка POST-запроса
+                fetch(devApiUrl + '/app', {
+                    method: 'POST',
+                    body: JSON.stringify(this.formData)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Данные успешно отправлены');
+                            // Очистка формы
+                            this.formData = {
+                                name: '',
+                                phone: '',
+                                email: '',
+                                price: ''
+                            };
+                        } else {
+                            this.errorMessage = 'Произошла ошибка при отправке данных.';
+                            this.showModal = true;
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        this.errorMessage = 'Произошла ошибка при отправке данных.';
+                        this.showModal = true;
+                    });
+            },
+            validateFormData() {
+                // Простая валидация данных (можете заменить на свою)
+                if (!this.formData.name || !this.formData.phone || !this.formData.email || !this.formData.price) {
+                    this.errorMessage = 'Пожалуйста, заполните все поля.';
+                    this.showModal = true;
+                    return false;
+                }
+                return true;
+            },
+            closeModal() {
+                this.showModal = false;
+            }
+        }
+    });
+</script>
+</body>
+</html>
