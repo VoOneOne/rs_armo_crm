@@ -13,6 +13,11 @@
     ],
     "require": {
         "php": "^8.0",
-        "amocrm/amocrm-api-library": "^1.1"
+        "amocrm/amocrm-api-library": "^1.2",
+        "slim/slim": "4.*",
+        "guzzlehttp/psr7": "^2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
     }
 }
